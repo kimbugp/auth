@@ -137,6 +137,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -145,7 +146,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
-
+KEYS_PATH = os.path.join(BASE_DIR, "keys")
 REST_SSO = {
     "IDENTITY": "auth",
     "AUTHENTICATE_HEADER": "Bearer",

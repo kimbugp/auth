@@ -1,6 +1,7 @@
 # coding: utf-8
 from __future__ import absolute_import, unicode_literals
 
+import logging
 from datetime import datetime
 
 import jwt
@@ -8,18 +9,13 @@ from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import six, timezone
 from django.utils.translation import gettext_lazy as _
-from jwt.exceptions import (
-    MissingRequiredClaimError,
-    InvalidIssuerError,
-    InvalidTokenError,
-)
+from jwt.exceptions import (InvalidIssuerError, InvalidTokenError,
+                            MissingRequiredClaimError)
 from rest_framework import exceptions
 
 from . import claims
-from .keys import get_private_key_and_key_id
+from .keys import get_private_key_and_key_id, get_public_key_and_key_id
 from .settings import api_settings
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -123,10 +119,9 @@ def decode_jwt_token(token):
         and unverified_issuer not in api_settings.ACCEPTED_ISSUERS
     ):
         raise InvalidIssuerError("Invalid issuer")
-    public_key, key_id = get_private_key_and_key_id(
+    public_key, key_id = get_public_key_and_key_id(
         issuer=unverified_issuer, key_id=unverified_key_id
     )
-
     options = {
         "verify_exp": api_settings.VERIFY_EXPIRATION,
         "verify_iss": api_settings.VERIFY_ISSUER,
@@ -136,7 +131,7 @@ def decode_jwt_token(token):
         jwt=token,
         key=public_key,
         verify=api_settings.VERIFY_SIGNATURE,
-        algorithms=api_settings.DECODE_ALGORITHMS or [api_settings.ENCODE_ALGORITHM],
+        algorithms=api_settings.DECODE_ALGORITHMS or [api_settings.ENCODE_ALGORITHM] ,
         options=options,
         leeway=api_settings.EXPIRATION_LEEWAY,
         audience=api_settings.IDENTITY,

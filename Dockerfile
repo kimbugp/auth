@@ -9,4 +9,5 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY auth auth
+COPY keys keys
 COPY manage.py . 

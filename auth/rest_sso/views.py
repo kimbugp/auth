@@ -1,6 +1,13 @@
 # coding: utf-8
 from __future__ import absolute_import, unicode_literals
 
+import json
+import logging
+import os
+
+from django.conf import settings
+from django.http import Http404, HttpResponse
+from django.shortcuts import render_to_response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,10 +15,8 @@ from rest_framework.views import APIView
 
 from . import claims
 from .models import SessionToken
-from .serializers import SessionTokenSerializer, AuthorizationTokenSerializer
+from .serializers import AuthorizationTokenSerializer, SessionTokenSerializer
 from .settings import api_settings
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +108,14 @@ class ObtainAuthorizationTokenView(BaseAPIView):
         jwt_token = encode_jwt_token(payload=payload)
         return Response({"token": jwt_token})
 
+
+def public_key(request):
+    file_path = os.path.join(settings.KEYS_PATH,'keys.json')
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/json")
+            return response
+    return  HttpResponse(json.dumps({"error": 'file not found'}), content_type="application/json")
 
 obtain_session_token = ObtainSessionTokenView.as_view()
 obtain_authorization_token = ObtainAuthorizationTokenView.as_view()

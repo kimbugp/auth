@@ -16,7 +16,7 @@ DEFAULTS = {
     "ENCODE_JWT_TOKEN": "auth.rest_sso.utils.encode_jwt_token",
     "DECODE_JWT_TOKEN": "auth.rest_sso.utils.decode_jwt_token",
     "AUTHENTICATE_PAYLOAD": "auth.rest_sso.utils.authenticate_payload",
-    "ENCODE_ALGORITHM": "HS256",
+    "ENCODE_ALGORITHM": "RS256",
     "DECODE_ALGORITHMS": None,
     "VERIFY_SIGNATURE": True,
     "VERIFY_EXPIRATION": True,
