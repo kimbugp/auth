@@ -21,3 +21,5 @@ SCOPES = "scopes"
 
 TOKEN_SESSION = "session"
 TOKEN_AUTHORIZATION = "auth"
+
+AUTHORIZATION = 'authorization'

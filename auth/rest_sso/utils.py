@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import logging
 from datetime import datetime
+from json import JSONEncoder
 
 import jwt
 from django.contrib.auth import get_user_model
@@ -28,7 +29,6 @@ def create_session_payload(session_token, user, **kwargs):
         claims.EMAIL: user.email,
     }
 
-
 def create_authorization_payload(session_token, user, **kwargs):
     return {
         claims.TOKEN: claims.TOKEN_AUTHORIZATION,
@@ -36,6 +36,7 @@ def create_authorization_payload(session_token, user, **kwargs):
         claims.USER_ID: str(user.pk),
         claims.EMAIL: user.email,
         claims.SCOPES: [],
+        claims.AUTHORIZATION:user.get_group_permissions()
     }
 
 
@@ -98,6 +99,7 @@ def encode_jwt_token(payload):
         key=private_key,
         algorithm=api_settings.ENCODE_ALGORITHM,
         headers=headers,
+        json_encoder=SetEncoder
     ).decode("utf-8")
 
 
@@ -180,5 +182,13 @@ def authenticate_payload(payload, request=None):
 
     if not user.is_active:
         raise exceptions.AuthenticationFailed(_("User inactive or deleted."))
-
     return user
+
+class SetEncoder(JSONEncoder):
+    def default(self, o):
+        try:
+            iterable = iter(o)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
