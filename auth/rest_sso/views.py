@@ -6,16 +6,22 @@ import logging
 import os
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from . import claims
 from .models import SessionToken
-from .serializers import AuthorizationTokenSerializer, SessionTokenSerializer
+from .serializers import (
+    AuthorizationTokenSerializer,
+    SessionTokenSerializer,
+    UserSerializer,
+)
 from .settings import api_settings
 
 logger = logging.getLogger(__name__)
@@ -109,13 +115,24 @@ class ObtainAuthorizationTokenView(BaseAPIView):
         return Response({"token": jwt_token})
 
 
+class CreateUserView(CreateAPIView):
+
+    model = get_user_model()
+    permission_classes = [AllowAny]
+    serializer_class = UserSerializer
+
+
 def public_key(request):
-    file_path = os.path.join(settings.KEYS_PATH,'keys.json')
+    file_path = os.path.join(settings.KEYS_PATH, "keys.json")
     if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
+        with open(file_path, "rb") as fh:
             response = HttpResponse(fh.read(), content_type="application/json")
             return response
-    return  HttpResponse(json.dumps({"error": 'file not found'}), content_type="application/json")
+    return HttpResponse(
+        json.dumps({"error": "file not found"}), content_type="application/json"
+    )
+
 
 obtain_session_token = ObtainSessionTokenView.as_view()
 obtain_authorization_token = ObtainAuthorizationTokenView.as_view()
+create_user = CreateUserView.as_view()

@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 from .settings import api_settings
 
@@ -45,3 +46,31 @@ class SessionTokenSerializer(serializers.Serializer):
 
 class AuthorizationTokenSerializer(serializers.Serializer):
     pass
+
+
+UserModel = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True)
+    is_stylist = serializers.BooleanField(required=False)
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = UserModel.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+    class Meta:
+        model = UserModel
+        fields = (
+            "id",
+            "username",
+            "password",
+            "is_stylist",
+            "email",
+            "first_name",
+            "last_name",
+        )
