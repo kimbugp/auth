@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import render_to_response
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -133,6 +133,14 @@ def public_key(request):
     )
 
 
+class SingleUserView(RetrieveAPIView):
+    serializer_class = UserSerializer
+    queryset = get_user_model().objects.all()
+    lookup_field = "id"
+    permission_classes = [AllowAny]
+
+
 obtain_session_token = ObtainSessionTokenView.as_view()
 obtain_authorization_token = ObtainAuthorizationTokenView.as_view()
 create_user = CreateUserView.as_view()
+view_user = SingleUserView.as_view()

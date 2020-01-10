@@ -23,3 +23,5 @@ TOKEN_SESSION = "session"
 TOKEN_AUTHORIZATION = "auth"
 
 AUTHORIZATION = 'authorization'
+
+STYLIST = 'is_stylist'

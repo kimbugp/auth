@@ -10,8 +10,11 @@ from django.contrib.auth import get_user_model
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import six, timezone
 from django.utils.translation import gettext_lazy as _
-from jwt.exceptions import (InvalidIssuerError, InvalidTokenError,
-                            MissingRequiredClaimError)
+from jwt.exceptions import (
+    InvalidIssuerError,
+    InvalidTokenError,
+    MissingRequiredClaimError,
+)
 from rest_framework import exceptions
 
 from . import claims
@@ -29,6 +32,7 @@ def create_session_payload(session_token, user, **kwargs):
         claims.EMAIL: user.email,
     }
 
+
 def create_authorization_payload(session_token, user, **kwargs):
     return {
         claims.TOKEN: claims.TOKEN_AUTHORIZATION,
@@ -36,7 +40,8 @@ def create_authorization_payload(session_token, user, **kwargs):
         claims.USER_ID: str(user.pk),
         claims.EMAIL: user.email,
         claims.SCOPES: [],
-        claims.AUTHORIZATION:user.get_group_permissions()
+        claims.AUTHORIZATION: user.get_group_permissions(),
+        claims.STYLIST: user.is_stylist,
     }
 
 
@@ -99,7 +104,7 @@ def encode_jwt_token(payload):
         key=private_key,
         algorithm=api_settings.ENCODE_ALGORITHM,
         headers=headers,
-        json_encoder=SetEncoder
+        json_encoder=SetEncoder,
     ).decode("utf-8")
 
 
@@ -133,7 +138,7 @@ def decode_jwt_token(token):
         jwt=token,
         key=public_key,
         verify=api_settings.VERIFY_SIGNATURE,
-        algorithms=api_settings.DECODE_ALGORITHMS or [api_settings.ENCODE_ALGORITHM] ,
+        algorithms=api_settings.DECODE_ALGORITHMS or [api_settings.ENCODE_ALGORITHM],
         options=options,
         leeway=api_settings.EXPIRATION_LEEWAY,
         audience=api_settings.IDENTITY,
@@ -183,6 +188,7 @@ def authenticate_payload(payload, request=None):
     if not user.is_active:
         raise exceptions.AuthenticationFailed(_("User inactive or deleted."))
     return user
+
 
 class SetEncoder(JSONEncoder):
     def default(self, o):

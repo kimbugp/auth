@@ -5,6 +5,7 @@ from .views import (
     obtain_session_token,
     public_key,
     create_user,
+    view_user,
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path("authorize", obtain_authorization_token),
     path("public", public_key),
     path("signup", create_user),
+    path("user/<str:id>", view_user),
 ]
