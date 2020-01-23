@@ -4,3 +4,4 @@ keys/key.pem
 .vscode/settings.json
 htmlcov
 *.pyc
+.coverage
