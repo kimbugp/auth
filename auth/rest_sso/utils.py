@@ -7,7 +7,6 @@ from json import JSONEncoder
 
 import jwt
 from django.contrib.auth import get_user_model
-from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import six, timezone
 from django.utils.translation import gettext_lazy as _
 from jwt.exceptions import (

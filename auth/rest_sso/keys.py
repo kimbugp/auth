@@ -1,17 +1,11 @@
 # coding: utf-8
 import logging
 import os
-import textwrap
 
-import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import (load_pem_private_key,
                                                           load_pem_public_key)
-from cryptography.x509 import load_pem_x509_certificate
-from django.utils import six
-from jwt.exceptions import InvalidKeyError
 from django.conf import settings
-from .settings import api_settings
 
 logger = logging.getLogger(__name__)
 

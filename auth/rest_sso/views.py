@@ -7,8 +7,7 @@ import os
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
