@@ -9,3 +9,6 @@ django-rest-swagger
 dj-database-url
 psycopg2-binary
 requests
+pytest-django==3.8.0
+coverage>=5.0.3
+pytest-cov==2.8.1

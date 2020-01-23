@@ -2,3 +2,5 @@ db.sqlite3
 keys/cert.pem
 keys/key.pem
 .vscode/settings.json
+htmlcov
+*.pyc
